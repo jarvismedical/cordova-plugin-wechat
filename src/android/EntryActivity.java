@@ -5,10 +5,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.tencent.mm.opensdk.constants.ConstantsAPI;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
+import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
+import com.tencent.mm.opensdk.modelbiz.ChooseCardFromWXCardPackage;
 
 import xu.li.cordova.wechat.Wechat;
 
@@ -42,13 +45,76 @@ public class EntryActivity extends Activity implements IWXAPIEventHandler {
     @Override
     public void onResp(BaseResp resp) {
         Log.d(Wechat.TAG, "Wx resp errorCode=" + resp.errCode + " errorStr=" + resp.errStr);
-        Wechat.getInstance().getCallbackContext().success();
+        CallbackContext ctx = Wechat.getInstance().getCallbackContext();
+
+        if (ctx == null) {
+            return ;
+        }
+        
+        switch (resp.errCode) {
+            case BaseResp.ErrCode.ERR_OK:
+                switch (resp.getType()) {
+                    case ConstantsAPI.COMMAND_SENDAUTH:
+                        auth(resp);
+                        break;
+                    case ConstantsAPI.COMMAND_CHOOSE_CARD_FROM_EX_CARD_PACKAGE:
+                    case ConstantsAPI.COMMAND_PAY_BY_WX:
+                    default:
+                        ctx.success();
+                        break;
+                }
+                break;
+            case BaseResp.ErrCode.ERR_USER_CANCEL:
+                ctx.error("ERR_USER_CANCEL");
+                break;
+            case BaseResp.ErrCode.ERR_AUTH_DENIED:
+                ctx.error("ERR_AUTH_DENIED");
+                break;
+            case BaseResp.ErrCode.ERR_SENT_FAILED:
+                ctx.error("ERR_SENT_FAILED");
+                break;
+            case BaseResp.ErrCode.ERR_UNSUPPORT:
+                ctx.error("ERR_UNSUPPORT");
+                break;
+            case BaseResp.ErrCode.ERR_COMM:
+                ctx.error("ERR_COMM");
+                break;
+            default:
+                ctx.error("ERR_UNKONWN");
+                break;
+        }
+
         this.finish();
     }
 
     @Override
     public void onReq(BaseReq req) {
         finish();
+    }
+
+    private void auth(BaseResp resp) {
+        SendAuth.Resp res = ((SendAuth.Resp) resp);
+
+        Log.d(Wechat.TAG, res.toString());
+
+        // get current callback context
+        CallbackContext ctx = Wechat.getInstance().getCallbackContext();
+
+        if (ctx == null) {
+            return ;
+        }
+
+        JSONObject response = new JSONObject();
+        try {
+            response.put("code", res.code);
+            response.put("state", res.state);
+            response.put("country", res.country);
+            response.put("lang", res.lang);
+        } catch (JSONException e) {
+            Log.e(Wechat.TAG, e.getMessage());
+        }
+
+        ctx.success(response);
     }
 
 }

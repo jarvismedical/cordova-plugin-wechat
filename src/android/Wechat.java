@@ -50,7 +50,9 @@ public class Wechat extends CordovaPlugin {
 
         if (action.equals("sendPaymentRequest")) {
             return sendPaymentRequest(args, callbackContext);
-        }
+        } else if (action.equals("sendAuthRequest")) {
+            return sendAuthRequest(args, callbackContext);
+        } 
 
         return false;
     }
@@ -94,6 +96,34 @@ public class Wechat extends CordovaPlugin {
             callbackContext.error(ERROR_SEND_REQUEST_FAILED);
         }
 
+
+        return true;
+    }
+
+    private boolean sendAuthRequest(CordovaArgs args, CallbackContext callbackContext) {
+
+        final SendAuth.Req req = new SendAuth.Req();
+        try {
+            req.scope = args.getString(0);
+            req.state = args.getString(1);
+        } catch (JSONException e) {
+            Log.e(TAG, e.getMessage());
+
+            req.scope = "snsapi_userinfo";
+            req.state = "wechat";
+        }
+
+        if (api.sendReq(req)) {
+            Log.i(TAG, "Auth request has been sent successfully.");
+
+            // send no result
+            sendNoResultPluginResult(callbackContext);
+        } else {
+            Log.i(TAG, "Auth request has been sent unsuccessfully.");
+
+            // send error
+            callbackContext.error(ERROR_SEND_REQUEST_FAILED);
+        }
 
         return true;
     }

@@ -290,27 +290,27 @@ static int const MAX_THUMBNAIL_SIZE = 320;
             break;
 
         case WXErrCodeCommon:
-            message = @"普通错误";
+            message = @"ERR_COMM";
             break;
 
         case WXErrCodeUserCancel:
-            message = @"用户点击取消并返回";
+            message = @"ERR_USER_CANCEL";
             break;
 
         case WXErrCodeSentFail:
-            message = @"发送失败";
+            message = @"ERR_SENT_FAILED";
             break;
 
         case WXErrCodeAuthDeny:
-            message = @"授权失败";
+            message = @"ERR_AUTH_DENIED";
             break;
 
         case WXErrCodeUnsupport:
-            message = @"微信不支持";
+            message = @"ERR_UNSUPPORT";
             break;
 
         default:
-            message = @"未知错误";
+            message = @"Unknown";
     }
 
     if (success)
