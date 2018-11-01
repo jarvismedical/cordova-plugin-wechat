@@ -2,6 +2,7 @@ package xu.li.cordova.wechat;
 
 import android.util.Log;
 
+import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
@@ -113,7 +114,7 @@ public class Wechat extends CordovaPlugin {
             req.state = "wechat";
         }
 
-        if (api.sendReq(req)) {
+        if (wxAPI.sendReq(req)) {
             Log.i(TAG, "Auth request has been sent successfully.");
 
             // send no result

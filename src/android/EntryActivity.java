@@ -11,7 +11,10 @@ import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
-import com.tencent.mm.opensdk.modelbiz.ChooseCardFromWXCardPackage;
+
+import org.apache.cordova.CallbackContext;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import xu.li.cordova.wechat.Wechat;
 
