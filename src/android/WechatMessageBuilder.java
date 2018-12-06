@@ -206,7 +206,11 @@ class WechatMessageBuilder {
         InputStream inputStream;
 
         if (URLUtil.isHttpUrl(url) || URLUtil.isHttpsUrl(url)) {
-            inputStream = new URL(url).openStream();
+            try {
+                inputStream = new URL(url).openStream();
+            } catch (Exception e) {
+                inputStream = null;
+            }
 
             Log.d(TAG, String.format("File was downloaded and cached to %s.", url));
         } else if (url.startsWith("data:image")) {  // base64 image
